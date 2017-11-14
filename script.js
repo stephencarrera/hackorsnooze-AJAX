@@ -1,30 +1,6 @@
 $(function() {
   const $form = $(".form");
 
-  $("ol").on("click", "li > .hostname > a", function(e) {
-    e.preventDefault();
-    console.log("I am " + $(this).text());
-    let $a = $("small > a");
-    console.log("a is " + $a);
-    let $link = $(this).text();
-    // let $siblings = $(this)
-    //   .parent()
-    //   .parent()
-    //   .siblings()
-    //   .children()
-    //   .children();
-    // console.log($siblings);
-    $a.each(function(i, ele) {
-      if ($(ele).text() !== $link) {
-        $(ele)
-          .parent()
-          .parent()
-          .hide();
-      }
-    });
-    $(".favall").text("all");
-  });
-
   function hostnameURL($URL) {
     let URL = "";
     for (let i = $URL.indexOf(".") + 1; i < $URL.length; i++) {
@@ -39,16 +15,18 @@ $(function() {
     return domain;
   }
 
+  // toggle favorites and all links
+
   $(".favall").on("click", function(e) {
-    let el = $(this);
-    if (el.text() === "favorites") {
-      el.text("all");
+    let ele = $(this);
+    if (ele.text() === "favorites") {
+      ele.text("all");
       $("ol > li > i.fa-star-o")
         .parent()
         .hide();
-    } else if (el.text() === "all") {
-      el.text("favorites");
-      //ol > li > .homstname .parent().show()
+    } else if (ele.text() === "all") {
+      ele.text("favorites");
+
       $("ol > li > i.fa-star-o")
         .parent()
         .show();
@@ -56,24 +34,31 @@ $(function() {
     }
   });
 
+  // form submission of a new article
+
   $form.on("submit", function(e) {
-    // append form submission
     e.preventDefault();
+
+    // Set the title to a variable
     let $title = $("#abc").val();
+    // Set the URL to a variable
     let $URL = $("#xyz").val();
+    // Default code for a favorite start
     let $starDefault = $("<i>")
       .attr("class", "fa fa-star-o")
       .attr("aria-hidden", "true");
+    // Extract hostname from URL and set to a variable using a function declared near line 4
     let $domain = hostnameURL($URL);
-
+    // Default code for hostname '(news.google.com)''
     let $hostname = $("<small>")
       .attr("class", "text-muted hostname")
       .append($domain);
+    // Default code for article title
     let $newLink = $("<a>")
       .attr("href", $URL)
       .attr("target", "_blank")
       .text(" " + $title + " ");
-
+    // putting all the pieces together
     let $newLi = $("<li>")
       .attr("class", "row list-group-item")
       .append($starDefault)
@@ -82,18 +67,36 @@ $(function() {
 
     $(".articles").append($newLi);
 
+    // clear the form
     $("#abc").val("");
     $("#xyz").val("");
+    // hide the form
     $("#exampleAccordion > .item > #exampleAccordion1").toggleClass("show");
     $("#exampleAccordion > .nav-link .item > a").toggleClass("collapsed");
   });
+
+  // Toggle link as a favorite
 
   $("ol").on("click", "li > i", function(e) {
     $(this).toggleClass("fa fa-star-o fa fa-star");
   });
 
-  // $("ul").on("click", "li > i", function(e){
-  //  $(this).toggleClass('fa fa-star-o fa fa-star')
+  // Toggle links by hostname and show all (instead of favorites in navbar)
 
-  // });
+  $("ol").on("click", "li > .hostname > a", function(e) {
+    e.preventDefault();
+
+    let $a = $("small > a");
+    let $link = $(this).text();
+
+    $a.each(function(i, ele) {
+      if ($(ele).text() !== $link) {
+        $(ele)
+          .parent()
+          .parent()
+          .hide();
+      }
+    });
+    $(".favall").text("all");
+  });
 });
