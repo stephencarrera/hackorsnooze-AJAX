@@ -15,9 +15,26 @@ $(function() {
     return domain;
   }
 
-  // toggle favorites and all links
+  function toggleFavsAll() {
+    let ele = $(".favall");
+    if (ele.text() === "favorites") {
+      ele.text("all");
+      $("ol > li > i.fa-star-o")
+        .parent()
+        .hide();
+    } else if (ele.text() === "all") {
+      ele.text("favorites");
 
-  $(".favall").on("click", function(e) {
+      $("ol > li > i.fa-star-o")
+        .parent()
+        .show();
+      $("ol > li").show();
+    }
+  }
+
+  // toggle favorites and all links
+  //$(".favall").on("click", toggleFavsAll(e))
+  $(".favall").on("click", function() {
     let ele = $(this);
     if (ele.text() === "favorites") {
       ele.text("all");
@@ -33,7 +50,6 @@ $(function() {
       $("ol > li").show();
     }
   });
-
   // form submission of a new article
 
   $form.on("submit", function(e) {
