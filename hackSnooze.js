@@ -37,7 +37,36 @@ $(function() {
   // on form submit #createNewUser (event listener needed), name - #newName , userName - #newUserName, password - #newPassword
   // POST request
 
-  // clear fields and hide menu
+
+
+
+//login user function
+function loginUser () {
+  console.log($username);
+  $.ajax({
+    url: 'https://hack-or-snooze.herokuapp.com/auth',
+    method: 'POST',
+    data: {
+      data: {
+        username: $username, 
+        password: $password
+      }
+    }
+  }).then(function(response) {
+      $token = response.data.token;
+      localStorage.setItem('token', $token);
+      console.log(response);
+  });
+}
+
+
+  //global scope -- declare username and password vars
+let $username;
+let $password;
+let $token = localStorage.getItem('token');
+
+
+  // create a user
   const $createNewUser = $("#createNewUser");
 
   $createNewUser.on("submit", function(e) {
@@ -58,9 +87,45 @@ $(function() {
         }
       }
     }).then(function(response) {
+      $username = $newUserName;
+      $password = $newPassword;
       console.log(response);
+      loginUser();
     });
   });
+
+
+//click login to login user
+  //this calls loginUser function
+const $login = $('#login');
+
+$login.on('click', function(e) {
+  e.preventDefault();
+
+  $username = $('#username').val();
+  $password = $('#password').val();
+
+  loginUser();
+});
+
+
+//create login function 
+  //check local storage for token 
+  //if token 
+    //login
+  //if no token 
+    //login and get token 
+
+
+
+//POST request 
+  //made to /auth -- https://hack-or-snooze.herokuapp.com/auth
+  //include data:data{} object
+    //username 
+    //password
+  //expect receive token
+    //save to local storage 
+
 
   var $form = $("#needs-validation");
   //submit a news story

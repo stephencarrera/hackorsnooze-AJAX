@@ -23,7 +23,7 @@
     <a class="nav-link text-light" href="#" id="toggleFeed" >favorites</a>
         
   <!--log in drop down button-->      
-    <a class="nav-link dropdown mr-0 ml-auto dropdown-toggle text-light" href="#" id="login" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">log in</a>
+    <a class="nav-link dropdown mr-0 ml-auto dropdown-toggle text-light" href="#" id="loginNav" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">log in</a>
 
   
   <!--login menu-->
@@ -32,11 +32,11 @@
 
       <!--username input-->
           <label for="title">username</label>
-          <input class="form-control" type="username" id="username" placeholder="username" aria-label="username">
+          <input class="form-control" type="text" id="username" placeholder="username" aria-label="username" required>
 
       <!--password input-->
           <label for="password">password</label>
-          <input class="form-control" type="password" id="password" placeholder="password" aria-label="password">
+          <input class="form-control" type="password" id="password" placeholder="password" aria-label="password" required>
       
       <!--submit button-->      
         <button id="login" class="btn btn-secondary text-center my-3" type="submit">log in</button>
@@ -48,8 +48,6 @@
 
       </form>
     </div>
-               
-  </div>
 </nav>
 
 <!--submit menu-->
