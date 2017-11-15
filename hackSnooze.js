@@ -19,7 +19,7 @@ $(function() {
 
       var $newLi = $("<li>", {
         addClass: "list-group-item",
-        attr: { id: array[index].storyId },
+        attr: { 'data-id': array[index].storyId },
         css: { display: "list-item" }
       });
 
@@ -33,10 +33,6 @@ $(function() {
     });
   });
 
-  // create a user
-  // id - #createNewUser
-  // on form submit #createNewUser (event listener needed), name - #newName , userName - #newUserName, password - #newPassword
-  // POST request
 
   //login user function
   function loginUser() {
@@ -104,20 +100,7 @@ $(function() {
     loginUser();
   });
 
-  //create login function
-  //check local storage for token
-  //if token
-  //login
-  //if no token
-  //login and get token
 
-  //POST request
-  //made to /auth -- https://hack-or-snooze.herokuapp.com/auth
-  //include data:data{} object
-  //username
-  //password
-  //expect receive token
-  //save to local storage
 
   var $form = $("#needs-validation");
 
@@ -137,10 +120,6 @@ $(function() {
       var authorInput = $("input#author").val();
       var urlInput = $("input#url").val();
 
-      console.log(localStorage.getItem("username"));
-      console.log(titleInput);
-      console.log(authorInput);
-      console.log(urlInput);
 
       $.ajax({
         url: "https://hack-or-snooze.herokuapp.com/stories",
@@ -197,14 +176,45 @@ $(function() {
 
   //toggle favorite mark
 
+
+
+//Adding favorites to login user 
+//POST
+  //username, storyId
+  //url/users/{username}/favorites/{storyId}
+//header: authorization token needed
+
+
+
   $("ol").on("click", "i", function(e) {
+    let username = JSON.parse(atob($token.split(".")[1])).username;
+    var storyIdNum = $(e.target).parent().attr('data-id');
     var $star = $(e.target);
     $star.toggleClass("favorite");
 
     if ($star.hasClass("favorite")) {
       $star.removeClass("fa-star-o").addClass("fa-star text-warning");
+      $.ajax({
+        url: `https://hack-or-snooze.herokuapp.com/users/${username}/favorites/${storyIdNum}`,
+        method: 'POST',
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        username: JSON.parse(atob($token.split(".")[1])).username,
+        storyId: storyIdNum
+      }).then(function(response) {
+        console.log(response);
+      })
+
     } else {
       $star.removeClass("fa-star text-warning").addClass("fa-star-o");
+      $.ajax({
+        url: `https://hack-or-snooze.herokuapp.com/users/${username}/favorites/${storyIdNum}`,
+        method: 'DELETE',
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        username: JSON.parse(atob($token.split(".")[1])).username,
+        storyId: storyIdNum
+      }).then(function(response) {
+        console.log('woahhhh it is gone!');
+      })
     }
   });
 
