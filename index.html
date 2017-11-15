@@ -17,7 +17,7 @@
   
   <!--submit navigation opens form-->
     
-    <a class="nav-link text-light btn" href="#addNews" data-toggle="collapse" aria-expanded="false" aria-controls="addNews">submit</a>
+    <a class="nav-link text-light btn" id="navSubmit" href="#addNews" data-toggle="collapse" aria-expanded="false" aria-controls="addNews">submit</a>
          
   <!--favorite navigation toggles feed-->    	
     <a class="nav-link text-light" href="#" id="toggleFeed" >favorites</a>
@@ -57,11 +57,15 @@
 
       <!--title input-->
         <label for="title">title</label>
-        <input class="form-control" type="title" id="title" placeholder="title" aria-label="title" required>
+        <input class="form-control" type="text" id="title" placeholder="title" aria-label="title" required>
 
       <!--url input-->
         <label for="url">url</label>
         <input class="form-control" type="url" id="url" placeholder="url" aria-label="url" required>
+
+      <!--author input-->
+        <label for="author">author</label>
+        <input class="form-control" type="text" id="author" placeholder="author" aria-label="author" required>  
 
       <!--submit story button-->
         <div class="dropdown-divider"></div>

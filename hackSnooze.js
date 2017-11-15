@@ -1,6 +1,7 @@
 $(function() {
   //load stories
 
+
   $.getJSON("https://hack-or-snooze.herokuapp.com/stories").then(function(
     response
   ) {
@@ -54,6 +55,7 @@ function loginUser () {
     }
   }).then(function(response) {
       $token = response.data.token;
+      localStorage.setItem("username", $username);
       localStorage.setItem('token', $token);
       console.log(response);
   });
@@ -128,6 +130,7 @@ $login.on('click', function(e) {
 
 
   var $form = $("#needs-validation");
+
   //submit a news story
   $(".submitItem").on("click", "button#submit", function(e) {
     if ($form[0].checkValidity() === false) {
@@ -140,24 +143,40 @@ $login.on('click', function(e) {
       e.preventDefault();
 
       //get field values
-      var $titleInput = $(e.target)
-        .parent()
-        .find("input#title");
-      var $urlInput = $(e.target)
-        .parent()
-        .find("input#url");
+      var titleInput = $("input#title").val();
+      var authorInput = $("input#author").val();
+      var urlInput = $("input#url").val();
 
+      console.log(localStorage.getItem("username"));
+      console.log(titleInput);
+      console.log(authorInput);
+      console.log(urlInput);
+
+      $.ajax({
+        url: "https://hack-or-snooze.herokuapp.com/stories",
+        method: "POST",
+        headers: {Authorization: "Bearer " + localStorage.getItem('token')}, 
+        data : {
+          data : {
+            username: localStorage.getItem("username"),
+            title: titleInput,
+            author: authorInput,
+            url: urlInput
+          }
+        }
+      }).then(function(){
+        console.log($username);
       //create jQuery object for display
       var $newTitle = $("<a>", {
         addClass: "px-3 text-dark",
         css: { "text-decoration": "none" },
-        attr: { href: $urlInput.val(), target: "_blank" },
-        text: $titleInput.val()
+        attr: { href: urlInput, target: "_blank" },
+        text: titleInput
       });
 
       var $newDomain = $("<a>", {
         addClass: "text-muted small",
-        text: "(" + getDomain($urlInput.val()) + ")"
+        text: "(" + getDomain(urlInput) + ")"
       });
 
       var $newLi = $("<li>", {
@@ -174,14 +193,16 @@ $login.on('click', function(e) {
       $("ol").prepend($newLi);
 
       //reset submit form
-      $urlInput.val("");
-      $titleInput.val("");
+      urlInput = "";
+      titleInput = "";
       $(".dropdown-toggle").dropdown("toggle");
 
       //check if favorite filter active & display new item accordingly
       if ($("#toggleFeed").text() === "all") {
         $newLi.addClass("d-none");
       }
+    }
+      )
     }
   });
 
