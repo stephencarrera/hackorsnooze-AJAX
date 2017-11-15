@@ -64,7 +64,7 @@ $(function() {
       $token = response.data.token;
       localStorage.setItem("username", $username);
       localStorage.setItem("token", $token);
-      console.log(response);
+      
     });
   }
 
@@ -289,3 +289,24 @@ $(function() {
 // I appended username and updatedAt times to the story li
 // remove 'www.' from hostnames
 // added usernames and timecreated to story
+
+
+// IDEAs
+/*
+infinite scroll - http://jscroll.com/
+
+Hide stars from non-logged in users
+add storyId to the star as an id
+Reveal empty stars when user logs in
+Reveal filled stars if user favorite
+
+function checkForLogin() {
+  if (localStorage.getItem("token")) {
+    $login.text("logout");
+    $stars.show();
+  } else {
+    $login.text("login");
+    $stars.hide();
+    }
+}
+*/
