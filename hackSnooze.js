@@ -19,6 +19,7 @@ $(function() {
 
       var $newLi = $("<li>", {
         addClass: "list-group-item",
+        attr: { id: array[index].storyId },
         css: { display: "list-item" }
       });
 
@@ -85,7 +86,7 @@ $(function() {
     }).then(function(response) {
       $username = $newUserName;
       $password = $newPassword;
-      console.log(response);
+
       loginUser();
     });
   });
