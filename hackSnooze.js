@@ -1,7 +1,6 @@
 $(function() {
   //load stories
 
-
   $.getJSON("https://hack-or-snooze.herokuapp.com/stories").then(function(
     response
   ) {
@@ -38,35 +37,30 @@ $(function() {
   // on form submit #createNewUser (event listener needed), name - #newName , userName - #newUserName, password - #newPassword
   // POST request
 
-
-
-
-//login user function
-function loginUser () {
-  console.log($username);
-  $.ajax({
-    url: 'https://hack-or-snooze.herokuapp.com/auth',
-    method: 'POST',
-    data: {
+  //login user function
+  function loginUser() {
+    console.log($username);
+    $.ajax({
+      url: "https://hack-or-snooze.herokuapp.com/auth",
+      method: "POST",
       data: {
-        username: $username, 
-        password: $password
+        data: {
+          username: $username,
+          password: $password
+        }
       }
-    }
-  }).then(function(response) {
+    }).then(function(response) {
       $token = response.data.token;
       localStorage.setItem("username", $username);
-      localStorage.setItem('token', $token);
+      localStorage.setItem("token", $token);
       console.log(response);
-  });
-}
-
+    });
+  }
 
   //global scope -- declare username and password vars
-let $username;
-let $password;
-let $token = localStorage.getItem('token');
-
+  let $username;
+  let $password;
+  let $token = localStorage.getItem("token");
 
   // create a user
   const $createNewUser = $("#createNewUser");
@@ -96,38 +90,33 @@ let $token = localStorage.getItem('token');
     });
   });
 
-
-//click login to login user
+  //click login to login user
   //this calls loginUser function
-const $login = $('#login');
+  const $login = $("#login");
 
-$login.on('click', function(e) {
-  e.preventDefault();
+  $login.on("click", function(e) {
+    e.preventDefault();
 
-  $username = $('#username').val();
-  $password = $('#password').val();
+    $username = $("#username").val();
+    $password = $("#password").val();
 
-  loginUser();
-});
+    loginUser();
+  });
 
+  //create login function
+  //check local storage for token
+  //if token
+  //login
+  //if no token
+  //login and get token
 
-//create login function 
-  //check local storage for token 
-  //if token 
-    //login
-  //if no token 
-    //login and get token 
-
-
-
-//POST request 
+  //POST request
   //made to /auth -- https://hack-or-snooze.herokuapp.com/auth
   //include data:data{} object
-    //username 
-    //password
+  //username
+  //password
   //expect receive token
-    //save to local storage 
-
+  //save to local storage
 
   var $form = $("#needs-validation");
 
@@ -155,54 +144,53 @@ $login.on('click', function(e) {
       $.ajax({
         url: "https://hack-or-snooze.herokuapp.com/stories",
         method: "POST",
-        headers: {Authorization: "Bearer " + localStorage.getItem('token')}, 
-        data : {
-          data : {
-            username: localStorage.getItem("username"),
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        data: {
+          data: {
+            username: JSON.parse(atob($token.split(".")[1])).username,
             title: titleInput,
             author: authorInput,
             url: urlInput
           }
         }
-      }).then(function(){
+      }).then(function() {
         console.log($username);
-      //create jQuery object for display
-      var $newTitle = $("<a>", {
-        addClass: "px-3 text-dark",
-        css: { "text-decoration": "none" },
-        attr: { href: urlInput, target: "_blank" },
-        text: titleInput
+        //create jQuery object for display
+        var $newTitle = $("<a>", {
+          addClass: "px-3 text-dark",
+          css: { "text-decoration": "none" },
+          attr: { href: urlInput, target: "_blank" },
+          text: titleInput
+        });
+
+        var $newDomain = $("<a>", {
+          addClass: "text-muted small",
+          text: "(" + getDomain(urlInput) + ")"
+        });
+
+        var $newLi = $("<li>", {
+          addClass: "list-group-item",
+          css: { display: "list-item" }
+        });
+
+        //append parts of list item together to create complete item
+        $newLi.append('<i class="fa fa-star-o" aria-hidden="true"></i>');
+        $newLi.append($newTitle);
+        $newLi.append($newDomain);
+
+        //prepend new list item to document
+        $("ol").prepend($newLi);
+
+        //reset submit form
+        urlInput = "";
+        titleInput = "";
+        $(".dropdown-toggle").dropdown("toggle");
+
+        //check if favorite filter active & display new item accordingly
+        if ($("#toggleFeed").text() === "all") {
+          $newLi.addClass("d-none");
+        }
       });
-
-      var $newDomain = $("<a>", {
-        addClass: "text-muted small",
-        text: "(" + getDomain(urlInput) + ")"
-      });
-
-      var $newLi = $("<li>", {
-        addClass: "list-group-item",
-        css: { display: "list-item" }
-      });
-
-      //append parts of list item together to create complete item
-      $newLi.append('<i class="fa fa-star-o" aria-hidden="true"></i>');
-      $newLi.append($newTitle);
-      $newLi.append($newDomain);
-
-      //prepend new list item to document
-      $("ol").prepend($newLi);
-
-      //reset submit form
-      urlInput = "";
-      titleInput = "";
-      $(".dropdown-toggle").dropdown("toggle");
-
-      //check if favorite filter active & display new item accordingly
-      if ($("#toggleFeed").text() === "all") {
-        $newLi.addClass("d-none");
-      }
-    }
-      )
     }
   });
 
