@@ -1,42 +1,56 @@
 $(function() {
+  getStories();
   //load stories
+  function clearStories() {
+    $("ol").empty();
+  }
 
-  $.getJSON("https://hack-or-snooze.herokuapp.com/stories").then(function(
-    response
-  ) {
-    response.data.forEach(function(value, index, array) {
-      var $newTitle = $("<a>", {
-        addClass: "px-3 text-dark",
-        css: { "text-decoration": "none" },
-        attr: { href: array[index].url, target: "_blank" },
-        text: array[index].title
+  function getStories() {
+    $.getJSON("https://hack-or-snooze.herokuapp.com/stories").then(function(
+      response
+    ) {
+      response.data.forEach(function(value, index, array) {
+        var $newTitle = $("<a>", {
+          addClass: "px-3 text-dark",
+          css: { "text-decoration": "none" },
+          attr: { href: array[index].url, target: "_blank" },
+          text: array[index].title
+        });
+
+        var $newDomain = $("<a>", {
+          addClass: "text-muted small",
+          text: "(" + getDomain(array[index].url) + ")"
+        });
+
+        var $newLi = $("<li>", {
+          addClass: "list-group-item",
+          attr: { "data-id": array[index].storyId },
+          css: { display: "list-item" }
+        });
+        var $timeCreatedByUser = $("<span>", {
+          addClass: "text-muted small",
+          text:
+            "created by " +
+            array[index].username +
+            " about " +
+            moment(array[index].updatedAt).fromNow() +
+            "  "
+        });
+
+        //append parts of list item together to create complete item
+        $newLi.append('<i class="fa fa-star-o" aria-hidden="true"></i>');
+        $newLi.append($newTitle);
+        $newLi.append($timeCreatedByUser);
+        $newLi.append($newDomain);
+
+        //append new list item to document
+        $("ol").append($newLi);
       });
-
-      var $newDomain = $("<a>", {
-        addClass: "text-muted small",
-        text: "(" + getDomain(array[index].url) + ")"
-      });
-
-      var $newLi = $("<li>", {
-        addClass: "list-group-item",
-        attr: { 'data-id': array[index].storyId },
-        css: { display: "list-item" }
-      });
-
-      //append parts of list item together to create complete item
-      $newLi.append('<i class="fa fa-star-o" aria-hidden="true"></i>');
-      $newLi.append($newTitle);
-      $newLi.append($newDomain);
-
-      //append new list item to document
-      $("ol").append($newLi);
     });
-  });
-
+  }
 
   //login user function
   function loginUser() {
-    console.log($username);
     $.ajax({
       url: "https://hack-or-snooze.herokuapp.com/auth",
       method: "POST",
@@ -50,7 +64,7 @@ $(function() {
       $token = response.data.token;
       localStorage.setItem("username", $username);
       localStorage.setItem("token", $token);
-      console.log(response);
+      
     });
   }
 
@@ -84,6 +98,8 @@ $(function() {
       $password = $newPassword;
 
       loginUser();
+      clearStories();
+      getStories();
     });
   });
 
@@ -98,9 +114,9 @@ $(function() {
     $password = $("#password").val();
 
     loginUser();
+    clearStories();
+    getStories();
   });
-
-
 
   var $form = $("#needs-validation");
 
@@ -120,7 +136,6 @@ $(function() {
       var authorInput = $("input#author").val();
       var urlInput = $("input#url").val();
 
-
       $.ajax({
         url: "https://hack-or-snooze.herokuapp.com/stories",
         method: "POST",
@@ -134,32 +149,32 @@ $(function() {
           }
         }
       }).then(function() {
-        console.log($username);
-        //create jQuery object for display
-        var $newTitle = $("<a>", {
-          addClass: "px-3 text-dark",
-          css: { "text-decoration": "none" },
-          attr: { href: urlInput, target: "_blank" },
-          text: titleInput
-        });
+        // console.log($username);
+        // //create jQuery object for display
+        // var $newTitle = $("<a>", {
+        //   addClass: "px-3 text-dark",
+        //   css: { "text-decoration": "none" },
+        //   attr: { href: urlInput, target: "_blank" },
+        //   text: titleInput
+        // });
 
-        var $newDomain = $("<a>", {
-          addClass: "text-muted small",
-          text: "(" + getDomain(urlInput) + ")"
-        });
+        // var $newDomain = $("<a>", {
+        //   addClass: "text-muted small",
+        //   text: "(" + getDomain(urlInput) + ")"
+        // });
 
-        var $newLi = $("<li>", {
-          addClass: "list-group-item",
-          css: { display: "list-item" }
-        });
+        // var $newLi = $("<li>", {
+        //   addClass: "list-group-item",
+        //   css: { display: "list-item" }
+        // });
 
-        //append parts of list item together to create complete item
-        $newLi.append('<i class="fa fa-star-o" aria-hidden="true"></i>');
-        $newLi.append($newTitle);
-        $newLi.append($newDomain);
+        // //append parts of list item together to create complete item
+        // $newLi.append('<i class="fa fa-star-o" aria-hidden="true"></i>');
+        // $newLi.append($newTitle);
+        // $newLi.append($newDomain);
 
-        //prepend new list item to document
-        $("ol").prepend($newLi);
+        // //prepend new list item to document
+        // $("ol").prepend($newLi);
 
         //reset submit form
         urlInput = "";
@@ -170,25 +185,25 @@ $(function() {
         if ($("#toggleFeed").text() === "all") {
           $newLi.addClass("d-none");
         }
+        clearStories();
+        getStories();
       });
     }
   });
 
   //toggle favorite mark
 
-
-
-//Adding favorites to login user 
-//POST
+  //Adding favorites to login user
+  //POST
   //username, storyId
   //url/users/{username}/favorites/{storyId}
-//header: authorization token needed
-
-
+  //header: authorization token needed
 
   $("ol").on("click", "i", function(e) {
     let username = JSON.parse(atob($token.split(".")[1])).username;
-    var storyIdNum = $(e.target).parent().attr('data-id');
+    var storyIdNum = $(e.target)
+      .parent()
+      .attr("data-id");
     var $star = $(e.target);
     $star.toggleClass("favorite");
 
@@ -196,25 +211,24 @@ $(function() {
       $star.removeClass("fa-star-o").addClass("fa-star text-warning");
       $.ajax({
         url: `https://hack-or-snooze.herokuapp.com/users/${username}/favorites/${storyIdNum}`,
-        method: 'POST',
+        method: "POST",
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
         username: JSON.parse(atob($token.split(".")[1])).username,
         storyId: storyIdNum
       }).then(function(response) {
         console.log(response);
-      })
-
+      });
     } else {
       $star.removeClass("fa-star text-warning").addClass("fa-star-o");
       $.ajax({
         url: `https://hack-or-snooze.herokuapp.com/users/${username}/favorites/${storyIdNum}`,
-        method: 'DELETE',
+        method: "DELETE",
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
         username: JSON.parse(atob($token.split(".")[1])).username,
         storyId: storyIdNum
       }).then(function(response) {
-        console.log('woahhhh it is gone!');
-      })
+        console.log("woahhhh it is gone!");
+      });
     }
   });
 
@@ -239,7 +253,11 @@ $(function() {
   function getDomain(data) {
     var a = document.createElement("a");
     a.href = data;
-    return a.hostname;
+    if (a.hostname.slice(0, 4) === "www.") {
+      return a.hostname.slice(4);
+    } else {
+      return a.hostname;
+    }
   }
 
   //filter by domain name
@@ -252,3 +270,43 @@ $(function() {
     $("#toggleFeed").text("all");
   });
 });
+
+// Bugs to Squash
+// create user does not empty the form and hide toggle on create account
+
+//  Features needed
+//  load icons when user logs in to show favorites in the feed (getStories)
+// https://hackorsnoozeapi.docs.apiary.io/#reference/0/user/get-a-user
+//  click username to toggle and see all stories submitted by user
+//  fail messages for not failed login / create user / submit story
+//  success messages
+//  user profile section
+//  user logout
+
+// Accomplishments
+// I made a clearStories and wrapped existing code into a getStories Function
+// commented out duplicate code with functions
+// I appended username and updatedAt times to the story li
+// remove 'www.' from hostnames
+// added usernames and timecreated to story
+
+
+// IDEAs
+/*
+infinite scroll - http://jscroll.com/
+
+Hide stars from non-logged in users
+add storyId to the star as an id
+Reveal empty stars when user logs in
+Reveal filled stars if user favorite
+
+function checkForLogin() {
+  if (localStorage.getItem("token")) {
+    $login.text("logout");
+    $stars.show();
+  } else {
+    $login.text("login");
+    $stars.hide();
+    }
+}
+*/
