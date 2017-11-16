@@ -35,6 +35,11 @@ $(function() {
             " about " +
             moment(array[index].updatedAt).fromNow() +
             "  "
+        })
+
+        var $trashStory = $('<i>', {
+          addClass: "fa fa-trash-o",
+          attr: { "aria-hidden": "true"}
         });
 
         //append parts of list item together to create complete item
@@ -42,12 +47,15 @@ $(function() {
         $newLi.append($newTitle);
         $newLi.append($timeCreatedByUser);
         $newLi.append($newDomain);
+        $newLi.append($trashStory);
 
         //append new list item to document
         $("ol").append($newLi);
+        });
       });
-    });
-  }
+    };
+  
+
 
   //login user function
   function loginUser() {
@@ -117,6 +125,22 @@ $(function() {
     clearStories();
     getStories();
   });
+
+  $('ol').on('click', 'li > .fa-trash-o', function(e) {
+    let storyIdToRemove = $(e.target).parent().attr('data-id');
+    console.log(e.target)
+    console.log(storyIdToRemove)
+    $.ajax({
+      url: `https://hack-or-snooze.herokuapp.com/stories/${storyIdToRemove}`,
+      method: "DELETE",
+      headers: {Authorization: "Bearer " + $token}
+    }).then(function(response) {
+      console.log('i deleted it')
+      clearStories()
+      getStories()
+    })
+  })
+
 
   var $form = $("#needs-validation");
 
@@ -199,7 +223,7 @@ $(function() {
   //url/users/{username}/favorites/{storyId}
   //header: authorization token needed
 
-  $("ol").on("click", "i", function(e) {
+  $("ol").on("click", ".fa-star, .fa-star-o", function(e) {
     let username = JSON.parse(atob($token.split(".")[1])).username;
     var storyIdNum = $(e.target)
       .parent()
