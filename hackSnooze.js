@@ -1,10 +1,21 @@
 $(function() {
   getStories();
-  //load stories
+
+  //global scope -- declare username and password vars
+  let $username;
+  let $password;
+  let $token = localStorage.getItem("token");
+
+  const $form = $("#needs-validation");
+  const $createNewUser = $("#createNewUser");
+  const $login = $("#login");
+
+  //clear stories
   function clearStories() {
     $("ol").empty();
   }
 
+  //load stories
   function getStories() {
     $.getJSON("https://hack-or-snooze.herokuapp.com/stories").then(function(
       response
@@ -35,11 +46,11 @@ $(function() {
             " about " +
             moment(array[index].updatedAt).fromNow() +
             "  "
-        })
+        });
 
-        var $trashStory = $('<i>', {
+        var $trashStory = $("<i>", {
           addClass: "fa fa-trash-o",
-          attr: { "aria-hidden": "true"}
+          attr: { "aria-hidden": "true" }
         });
 
         //append parts of list item together to create complete item
@@ -51,11 +62,21 @@ $(function() {
 
         //append new list item to document
         $("ol").append($newLi);
-        });
       });
-    };
-  
+    });
+  }
 
+  //get domain name
+
+  function getDomain(data) {
+    var a = document.createElement("a");
+    a.href = data;
+    if (a.hostname.slice(0, 4) === "www.") {
+      return a.hostname.slice(4);
+    } else {
+      return a.hostname;
+    }
+  }
 
   //login user function
   function loginUser() {
@@ -72,17 +93,10 @@ $(function() {
       $token = response.data.token;
       localStorage.setItem("username", $username);
       localStorage.setItem("token", $token);
-      
     });
   }
 
-  //global scope -- declare username and password vars
-  let $username;
-  let $password;
-  let $token = localStorage.getItem("token");
-
   // create a user
-  const $createNewUser = $("#createNewUser");
 
   $createNewUser.on("submit", function(e) {
     e.preventDefault();
@@ -113,7 +127,6 @@ $(function() {
 
   //click login to login user
   //this calls loginUser function
-  const $login = $("#login");
 
   $login.on("click", function(e) {
     e.preventDefault();
@@ -126,23 +139,22 @@ $(function() {
     getStories();
   });
 
-  $('ol').on('click', 'li > .fa-trash-o', function(e) {
-    let storyIdToRemove = $(e.target).parent().attr('data-id');
-    console.log(e.target)
-    console.log(storyIdToRemove)
+  $("ol").on("click", "li > .fa-trash-o", function(e) {
+    let storyIdToRemove = $(e.target)
+      .parent()
+      .attr("data-id");
+    console.log(e.target);
+    console.log(storyIdToRemove);
     $.ajax({
       url: `https://hack-or-snooze.herokuapp.com/stories/${storyIdToRemove}`,
       method: "DELETE",
-      headers: {Authorization: "Bearer " + $token}
+      headers: { Authorization: "Bearer " + $token }
     }).then(function(response) {
-      console.log('i deleted it')
-      clearStories()
-      getStories()
-    })
-  })
-
-
-  var $form = $("#needs-validation");
+      console.log("i deleted it");
+      clearStories();
+      getStories();
+    });
+  });
 
   //submit a news story
   $(".submitItem").on("click", "button#submit", function(e) {
@@ -272,18 +284,6 @@ $(function() {
     }
   });
 
-  //get domain name
-
-  function getDomain(data) {
-    var a = document.createElement("a");
-    a.href = data;
-    if (a.hostname.slice(0, 4) === "www.") {
-      return a.hostname.slice(4);
-    } else {
-      return a.hostname;
-    }
-  }
-
   //filter by domain name
 
   $("ol").on("click", "a.small", function(e) {
@@ -313,7 +313,6 @@ $(function() {
 // I appended username and updatedAt times to the story li
 // remove 'www.' from hostnames
 // added usernames and timecreated to story
-
 
 // IDEAs
 /*
